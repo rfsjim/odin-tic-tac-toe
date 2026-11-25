@@ -275,3 +275,9 @@ const ticTacToe = (
         };
     }
 )();
+
+module.exports = {
+    gameboard,
+    createPlayer,
+    ticTacToe,
+};
