@@ -1,0 +1,25 @@
+{
+  "name": "odin-tic-tac-toe",
+  "version": "1.0.0",
+  "description": "A JavaScript Web App to play Tic Tac Toe",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rfsjim/odin-tic-tac-toe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rfsjim/odin-tic-tac-toe/issues"
+  },
+  "homepage": "https://github.com/rfsjim/odin-tic-tac-toe#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
