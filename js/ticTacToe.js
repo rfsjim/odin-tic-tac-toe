@@ -3,24 +3,28 @@
  * @author James
  * @version 0.0.1
  * @since 2026-11-22
- * @updated 2026-11-24
+ * @updated 2026-11-25
  */
 
 /**
  * Mental Modelling 
  * Real World Activity  Proposed Owner
- * Draw the grid    Gameboard
- * Assign markers   Players
- * Is marker valid  Players
+ * Draw the grid    Gameboard (x)
+ * Check position availability  Gameboard (x)
+ * Place marker Gameboard (x)
+ * Knows current turn   Players
+ * Increment score  Player from instruction by game controller
  * Is marker already in use  Game controller
+ * Assign markers   Game controller
+ * Is marker valid  Game controller
  * Decide who starts    Game controller
  * Tracks current turn  Game controller
- * Knows current turn   Players
  * Alternate turns   Game controller
- * Check position availability  Gameboard
- * Place marker Gameboard
  * Determine winner or stalemate    Game controller
- * Increment score  Player from instruction by game controller
+ */
+
+/**
+ * @typedef {'X' | 'O' | undefined} TicTacToeMarker
  */
 
 /**
@@ -36,13 +40,8 @@ const gameboard = (
          * All elements will initalise with undefined.
          * @param {number} dimension 
          */
-        const createGrid = (dimension) => {
-            if (
-                typeof dimension !== "number" ||
-                !Number.isInteger(dimension) ||
-                !Number.isFinite(dimension) ||
-                dimension <= 0
-            ) {
+        const createGrid = (dimension = 3) => {
+            if (!isNumberValid(dimension)) {
                 throw new Error("Invalid Dimensions");
             }
             
@@ -51,13 +50,89 @@ const gameboard = (
             );
         };
 
-        return { createGrid };
+        /**
+         * Is Position Available
+         * @param {Array} gameGrid 
+         * @param {number} x 
+         * @param {number} y 
+         * @returns {boolean}
+         */
+        const isPositionAvailable = (gameGrid, x, y) => {
+            if (!isPositionValid(gameGrid, x, y,)) {
+                throw new Error("Invalid x and y Co-Ordinates");
+            }
+
+            return gameGrid[y][x] === undefined; 
+        };
+
+        /**
+         * Places Marker on Game Board
+         * @param {TicTacToeMarker} marker 
+         * @param {Array} gameGrid 
+         * @param {number} x 
+         * @param {number} y 
+         */
+        const placeMarker = (marker, gameGrid, x, y) => {
+            if (!isPositionValid(gameGrid, x, y)) {
+                throw new Error("Invalid x and y Co-Ordinates");
+            }
+
+            if (isPositionAvailable(gameGrid, x, y)) {
+                gameGrid[y][x] = marker;
+            }
+            else {
+                throw new Error("Move not valid, possible already taken.");
+            }
+        };
+        
+        /**
+         * Is Number a Valid Number?
+         * @param {number} number 
+         * @returns {boolean}
+         */
+        const isNumberValid = (number) => {
+            if (
+                    typeof number !== "number" ||
+                    !Number.isInteger(number) ||
+                    !Number.isFinite(number) ||
+                    number <= 0
+                ) {
+                    return false;
+                }
+            
+            return true;
+        };
+
+        /**
+         * Is Position a Valid Position?
+         * @param {Array} gameGrid 
+         * @param {number} x 
+         * @param {number} y 
+         * @returns {boolean}
+         */
+        const isPositionValid = (gameGrid, x, y) => {
+            if (
+                    typeof x !== 'number' ||
+                    typeof y !== 'number' ||
+                    !Number.isInteger(x) ||
+                    !Number.isInteger(y) ||
+                    !Number.isFinite(x) ||
+                    !Number.isFinite(y) ||
+                    x < gameGrid.length ||
+                    y < gameGrid.length 
+                ) {
+                    return false;
+                }
+
+            return true;
+        };
+
+        return {
+            createGrid,
+            placeMarker,
+        };
     }
 )();
-
-/**
- * @typedef {'X' | 'O'} TicTacToeMarker
- */
 
 /**
  * Tic Tac Toe Player
@@ -85,11 +160,118 @@ function createPlayer(name, marker) {
 
 // And An object to control the flow of the game itself.
 
-function TicTacToe() {
-    if (!new.target) {
-        throw Error("You must use the 'new' operator to call the constructor");
-    }
+/**
+ * Tic Tac Toe Game Controller
+ * Need ONE game controller is IIFE
+ */
+const ticTacToe = (
+    () => {
+        /**
+         * Needs methods like
+         * gameInit
+         * isWinner,
+         * isStalemate,
+         * Is marker already in use  Game controller
+         * Assign markers   Game controller
+         * Is marker valid  Game controller
+         * Decide who starts    Game controller
+         * Tracks current turn  Game controller
+         * Alternate turns   Game controller
+         * Determine winner or stalemate    Game controller
+         */
 
-    // Needs methods like
-    // isWinner, isStalemate, canWin, isPositionOccupied, 
-}
+        /**
+         * @type TicTacToeMarker[][]
+         */
+        let gameGrid;
+
+        /**
+         * Creates new gameboard
+         * @returns {void}
+         */
+        const gameInit = () => {
+            gameGrid = gameboard.createGrid();
+        };
+
+        /**
+         * Is there a winner
+         * @returns {boolean}
+         */
+        const isWinner = () => {
+            const winningLength = gameGrid.length;
+
+            let lastMarker = undefined;
+
+            // check rows for complete lines
+            for (const row of gameGrid) {
+                lastMarker = row[0];
+                if (lastMarker === undefined) {
+                    continue;
+                }
+
+                if (row.every(element => element === lastMarker)) {
+                    return true;
+                }
+            }
+
+            // check columns for complete lines
+            let count = 0;
+            for (let index = 0; index < winningLength; index++) {
+                lastMarker = gameGrid[0][index];
+                if (lastMarker === undefined) {
+                    continue;
+                }
+
+                for (let j = 0; j < winningLength; j++) {
+                    if (gameGrid[j][index] !== lastMarker) {
+                        continue;
+                    }
+                    else {
+                        count++;
+                    }
+                }
+            }
+
+            if (count === winningLength) {
+                return true;
+            }
+
+            // check top left - bottom right diagonal
+            lastMarker = gameGrid[0][0];
+            count = 0;
+
+            if (lastMarker !== undefined) {
+                for (let index = 1; index < winningLength; index++) {
+                    if (gameGrid[index][index] === lastMarker) {
+                        count++;
+                    }
+                }
+                
+                if (count === winningLength) {
+                    return true;
+                }
+            }
+
+            // check top right - bottom left diagonal
+            lastMarker = gameGrid[0][winningLength - 1];
+            count = 0;
+
+            if (lastMarker !== undefined) {
+                for (let index = 1; index < winningLength; index++) {
+                    for (let j = winningLength - 2; j >= 0; j--) {
+                        if (gameGrid[index][j] === lastMarker) {
+                            count++;
+                        }
+                    }
+                }
+            }
+
+            if (countunt === winningLength) {
+                return true;
+            }
+
+
+            return false;
+        };
+    }
+)();
