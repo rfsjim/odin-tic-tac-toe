@@ -268,12 +268,17 @@ const ticTacToe = (
                 }
             }
 
-            if (countunt === winningLength) {
+            if (count === winningLength) {
                 return true;
             }
 
 
             return false;
+        };
+
+        return {
+            gameInit,
+            isWinner,
         };
     }
 )();
