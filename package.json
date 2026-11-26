@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/rfsjim/odin-tic-tac-toe#readme",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.11",
     "jest": "^29.7.0"
   }
 }
