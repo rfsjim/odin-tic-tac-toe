@@ -118,8 +118,10 @@ const gameboard = (
                     !Number.isInteger(y) ||
                     !Number.isFinite(x) ||
                     !Number.isFinite(y) ||
-                    x < gameGrid.length ||
-                    y < gameGrid.length 
+                    x >= gameGrid.length ||
+                    y >= gameGrid.length ||
+                    x < 0 ||
+                    y < 0
                 ) {
                     return false;
                 }
