@@ -195,16 +195,17 @@ const ticTacToe = (
 
         /**
          * Is there a winner
+         * @param {TicTacToeMarker[][]} board
          * @returns {boolean}
          */
-        const isWinner = () => {
-            const winningLength = gameGrid.length;
+        const isWinner = (board = gameGrid) => {
+            const winningLength = board.length;
 
             let lastMarker = undefined;
             let count = 0;
 
             // check rows for complete lines
-            for (const row of gameGrid) {
+            for (const row of board) {
                 lastMarker = row[0];
                 if (lastMarker === undefined) {
                     continue;
@@ -219,7 +220,7 @@ const ticTacToe = (
             // check columns for complete lines
             count = 0;
             for (let index = 0; index < winningLength; index++) {
-                lastMarker = gameGrid[0][index];
+                lastMarker = board[0][index];
                 if (lastMarker === undefined){ 
                     continue;
                 }
@@ -227,7 +228,7 @@ const ticTacToe = (
                 count = 0;
 
                 for (let j = 0; j < winningLength; j++) {
-                    if (gameGrid[j][index] !== lastMarker) {
+                    if (board[j][index] !== lastMarker) {
                         continue;
                     }
                     else {
@@ -243,11 +244,11 @@ const ticTacToe = (
 
             // check top left - bottom right diagonal
             count = 0;
-            lastMarker = gameGrid[0][0];
+            lastMarker = board[0][0];
 
             if (lastMarker !== undefined) {
                 for (let index = 0; index < winningLength; index++) {
-                    if (gameGrid[index][index] === lastMarker) {
+                    if (board[index][index] === lastMarker) {
                         count++;
                     }
                 }
@@ -262,11 +263,11 @@ const ticTacToe = (
 
             // check top right - bottom left diagonal
             count = 0;
-            lastMarker = gameGrid[0][winningLength - 1];
+            lastMarker = board[0][winningLength - 1];
 
             if (lastMarker !== undefined) {
                 for (let index = 0; index < winningLength; index++) {
-                    if (gameGrid[index][winningLength - 1 - index] === lastMarker) {
+                    if (board[index][winningLength - 1 - index] === lastMarker) {
                         count++;
                     }
                 }
@@ -282,6 +283,11 @@ const ticTacToe = (
             return false;
         };
 
+        
+        const isStalemate = () => {
+
+        };
+
         /**
          * Places Marker on Game Board
          * @param {TicTacToeMarker} marker 
@@ -289,8 +295,8 @@ const ticTacToe = (
          * @param {number} x 
          * @param {number} y 
          */
-        const placeMarker  = (marker, x, y, board = gameGrid) => {
-            gameboard.placeMarker(marker, board, x, y);
+        const placeMarker  = (marker, x, y) => {
+            gameboard.placeMarker(marker, gameGrid, x, y);
         };
 
         return {
