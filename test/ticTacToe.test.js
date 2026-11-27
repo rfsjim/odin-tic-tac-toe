@@ -5,3 +5,25 @@ test('empty board has no winner', () => {
     
     expect(ticTacToe.isWinner()).toBe(false);
 });
+
+test('each of the three rows can win', () => {
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('O', 0, 0);
+    ticTacToe.placeMarker('O', 0, 1);
+    ticTacToe.placeMarker('O', 0, 2);
+
+    expect(ticTacToe.isWinner()).toBe(true);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 1, 0);
+    ticTacToe.placeMarker('X', 1, 1);
+    ticTacToe.placeMarker('X', 1, 2);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 2, 0);
+    ticTacToe.placeMarker('X', 2, 1);
+    ticTacToe.placeMarker('X', 2, 2);
+});
