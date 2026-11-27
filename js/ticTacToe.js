@@ -276,9 +276,21 @@ const ticTacToe = (
             return false;
         };
 
+        /**
+         * Places Marker on Game Board
+         * @param {TicTacToeMarker} marker 
+         * @param {Array} gameGrid 
+         * @param {number} x 
+         * @param {number} y 
+         */
+        const placeMarker  = (marker, x, y, board = gameGrid) => {
+            gameboard.placeMarker(marker, board, x, y);
+        };
+
         return {
             gameInit,
             isWinner,
+            placeMarker,
         };
     }
 )();
