@@ -160,8 +160,6 @@ function createPlayer(name, marker) {
     };
 }
 
-// And An object to control the flow of the game itself.
-
 /**
  * Tic Tac Toe Game Controller
  * Need ONE game controller is IIFE
@@ -203,6 +201,7 @@ const ticTacToe = (
             const winningLength = gameGrid.length;
 
             let lastMarker = undefined;
+            let count = 0;
 
             // check rows for complete lines
             for (const row of gameGrid) {
@@ -212,17 +211,20 @@ const ticTacToe = (
                 }
 
                 if (row.every(element => element === lastMarker)) {
+                    console.log('Rows win');
                     return true;
                 }
             }
 
             // check columns for complete lines
-            let count = 0;
+            count = 0;
             for (let index = 0; index < winningLength; index++) {
                 lastMarker = gameGrid[0][index];
-                if (lastMarker === undefined) {
+                if (lastMarker === undefined){ 
                     continue;
                 }
+
+                count = 0;
 
                 for (let j = 0; j < winningLength; j++) {
                     if (gameGrid[j][index] !== lastMarker) {
@@ -235,43 +237,47 @@ const ticTacToe = (
             }
 
             if (count === winningLength) {
+                console.log('Cols win');
                 return true;
             }
 
             // check top left - bottom right diagonal
-            lastMarker = gameGrid[0][0];
             count = 0;
+            lastMarker = gameGrid[0][0];
 
             if (lastMarker !== undefined) {
-                for (let index = 1; index < winningLength; index++) {
+                for (let index = 0; index < winningLength; index++) {
                     if (gameGrid[index][index] === lastMarker) {
                         count++;
                     }
                 }
                 
                 if (count === winningLength) {
+                    console.log('Top left to bottom right win');
                     return true;
                 }
+
+                count = 0;
             }
 
             // check top right - bottom left diagonal
-            lastMarker = gameGrid[0][winningLength - 1];
             count = 0;
+            lastMarker = gameGrid[0][winningLength - 1];
 
             if (lastMarker !== undefined) {
-                for (let index = 1; index < winningLength; index++) {
-                    for (let j = winningLength - 2; j >= 0; j--) {
-                        if (gameGrid[index][j] === lastMarker) {
-                            count++;
-                        }
+                for (let index = 0; index < winningLength; index++) {
+                    if (gameGrid[index][winningLength - 1 - index] === lastMarker) {
+                        count++;
                     }
                 }
-            }
 
-            if (count === winningLength) {
-                return true;
-            }
+                if (count === winningLength) {
+                    console.log('Top right - bottom left win');
+                    return true;
+                }
 
+                count = 0;
+            }
 
             return false;
         };
