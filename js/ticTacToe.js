@@ -62,13 +62,13 @@ const gameboard = (
                 throw new Error("Invalid x and y Co-Ordinates");
             }
 
-            return gameGrid[y][x] === undefined; 
+            return gameGrid[x][y] === undefined; 
         };
 
         /**
          * Places Marker on Game Board
          * @param {TicTacToeMarker} marker 
-         * @param {Array} gameGrid 
+         * @param {TicTacToeMarker[][]} gameGrid 
          * @param {number} x 
          * @param {number} y 
          */
@@ -78,7 +78,7 @@ const gameboard = (
             }
 
             if (isPositionAvailable(gameGrid, x, y)) {
-                gameGrid[y][x] = marker;
+                gameGrid[x][y] = marker;
             }
             else {
                 throw new Error("Move not valid, possible already taken.");
@@ -168,9 +168,6 @@ const ticTacToe = (
     () => {
         /**
          * Needs methods like
-         * gameInit
-         * isWinner,
-         * isStalemate,
          * Is marker already in use  Game controller
          * Assign markers   Game controller
          * Is marker valid  Game controller
@@ -181,7 +178,7 @@ const ticTacToe = (
          */
 
         /**
-         * @type TicTacToeMarker[][]
+         * @type {TicTacToeMarker[][]}
          */
         let gameGrid;
 
@@ -201,8 +198,24 @@ const ticTacToe = (
         const isWinner = (board = gameGrid) => {
             const winningLength = board.length;
 
+            /**
+             * @type {TicTacToeMarker}
+             */
             let lastMarker = undefined;
             let count = 0;
+
+            // is board empty?
+            for (const row of board) {
+                if (row.every(element => element === undefined)) {
+                    count++;
+                }
+            }
+
+            if (count === board.length) {
+                return false;
+            }
+
+            count = 0;
 
             // check rows for complete lines
             for (const row of board) {
@@ -212,34 +225,31 @@ const ticTacToe = (
                 }
 
                 if (row.every(element => element === lastMarker)) {
-                    console.log('Rows win');
                     return true;
                 }
             }
 
             // check columns for complete lines
             count = 0;
-            for (let index = 0; index < winningLength; index++) {
-                lastMarker = board[0][index];
-                if (lastMarker === undefined){ 
+            for (let col = 0; col < winningLength; col++) {
+                lastMarker = board[0][col];
+
+                if (lastMarker === undefined) {
                     continue;
                 }
-
-                count = 0;
-
-                for (let j = 0; j < winningLength; j++) {
-                    if (board[j][index] !== lastMarker) {
+                for (let row = 0; row < winningLength; row++) {
+                    if (board[row][col] !== lastMarker) {
                         continue;
                     }
                     else {
                         count++;
                     }
                 }
-            }
 
-            if (count === winningLength) {
-                console.log('Cols win');
-                return true;
+                if (count === winningLength) {
+                    return true;
+                }
+                count = 0;
             }
 
             // check top left - bottom right diagonal
@@ -254,7 +264,6 @@ const ticTacToe = (
                 }
                 
                 if (count === winningLength) {
-                    console.log('Top left to bottom right win');
                     return true;
                 }
 
@@ -273,7 +282,6 @@ const ticTacToe = (
                 }
 
                 if (count === winningLength) {
-                    console.log('Top right - bottom left win');
                     return true;
                 }
 
@@ -284,14 +292,27 @@ const ticTacToe = (
         };
 
         
-        const isStalemate = () => {
-
+        /**
+         * Is Game a Stalemate
+         * Checks boards without undefined values (completed)
+         * For non winning setups
+         * 
+         * @param {TicTacToeMarker[][]} board
+         * @returns {boolean}
+         */
+        const isStalemate = (board = gameGrid) => {
+            for (const row of board) {
+                if (row.some(element => element === undefined)) {
+                    return false;
+                }
+            }
+            
+            return !isWinner(board);
         };
 
         /**
          * Places Marker on Game Board
-         * @param {TicTacToeMarker} marker 
-         * @param {Array} gameGrid 
+         * @param {TicTacToeMarker} marker
          * @param {number} x 
          * @param {number} y 
          */
@@ -302,6 +323,7 @@ const ticTacToe = (
         return {
             gameInit,
             isWinner,
+            isStalemate,
             placeMarker,
         };
     }
