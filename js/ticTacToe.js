@@ -204,19 +204,6 @@ const ticTacToe = (
             let lastMarker = undefined;
             let count = 0;
 
-            // is board empty?
-            for (const row of board) {
-                if (row.every(element => element === undefined)) {
-                    count++;
-                }
-            }
-
-            if (count === board.length) {
-                return false;
-            }
-
-            count = 0;
-
             // check rows for complete lines
             for (const row of board) {
                 lastMarker = row[0];
@@ -230,7 +217,6 @@ const ticTacToe = (
             }
 
             // check columns for complete lines
-            count = 0;
             for (let col = 0; col < winningLength; col++) {
                 lastMarker = board[0][col];
 
