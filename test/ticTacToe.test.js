@@ -40,6 +40,20 @@ test('each of the three rows can win', () => {
     ticTacToe.placeMarker('X', 2, 2);
 
     expect(ticTacToe.isWinner()).toBe(true);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 0, 0);
+    ticTacToe.placeMarker('X', 0, 1);
+    ticTacToe.placeMarker('X', 0, 2);
+    ticTacToe.placeMarker('O', 1, 0);
+    ticTacToe.placeMarker('O', 1, 1);
+    ticTacToe.placeMarker('X', 1, 2);
+    ticTacToe.placeMarker('X', 2, 0);
+    ticTacToe.placeMarker('X', 2, 1);
+    ticTacToe.placeMarker('O', 2, 2);
+
+    expect(ticTacToe.isWinner()).toBe(true);
 });
 
 test('each of the three cols can win', () => {
@@ -140,7 +154,7 @@ test('incomplete lines do not consitute a win', () => {
     expect(ticTacToe.isWinner()).toBe(false);
 });
 
-test('markers scattered across different lines do not consitute a win', () => {
+test('markers scattered across different lines do not consitute a win or stalemate', () => {
     ticTacToe.gameInit();
 
     ticTacToe.placeMarker('X', 1, 1);
@@ -148,6 +162,7 @@ test('markers scattered across different lines do not consitute a win', () => {
     ticTacToe.placeMarker('X', 0, 2);
 
     expect(ticTacToe.isWinner()).toBe(false);
+    expect(ticTacToe.isStalemate()).toBe(false);
 
     ticTacToe.gameInit();
 
@@ -156,6 +171,7 @@ test('markers scattered across different lines do not consitute a win', () => {
     ticTacToe.placeMarker('O', 2, 0);
 
     expect(ticTacToe.isWinner()).toBe(false);
+    expect(ticTacToe.isStalemate()).toBe(false);
 });
 
 test('a completed draw does not consitute a win', () => {
@@ -200,4 +216,80 @@ test('a completed draw does not consitute a win', () => {
     ticTacToe.placeMarker('O', 2, 2);
 
     expect(ticTacToe.isWinner()).toBe(false);
+});
+
+test('a stalemate is correctly identified', () => {
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 0, 0);
+    ticTacToe.placeMarker('O', 0, 1);
+    ticTacToe.placeMarker('O', 0, 2);
+    ticTacToe.placeMarker('O', 1, 0);
+    ticTacToe.placeMarker('X', 1, 1);
+    ticTacToe.placeMarker('X', 1, 2);
+    ticTacToe.placeMarker('X', 2, 0);
+    ticTacToe.placeMarker('X', 2, 1);
+    ticTacToe.placeMarker('O', 2, 2);
+
+    expect(ticTacToe.isStalemate()).toBe(true);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 0, 0);
+    ticTacToe.placeMarker('X', 0, 1);
+    ticTacToe.placeMarker('O', 0, 2);
+    ticTacToe.placeMarker('O', 1, 0);
+    ticTacToe.placeMarker('O', 1, 1);
+    ticTacToe.placeMarker('X', 1, 2);
+    ticTacToe.placeMarker('X', 2, 0);
+    ticTacToe.placeMarker('O', 2, 1);
+    ticTacToe.placeMarker('X', 2, 2);
+
+    expect(ticTacToe.isStalemate()).toBe(true);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 0, 0);
+    ticTacToe.placeMarker('X', 0, 1);
+    ticTacToe.placeMarker('O', 0, 2);
+    ticTacToe.placeMarker('O', 1, 0);
+    ticTacToe.placeMarker('O', 1, 1);
+    ticTacToe.placeMarker('X', 1, 2);
+    ticTacToe.placeMarker('X', 2, 0);
+    ticTacToe.placeMarker('X', 2, 1);
+    ticTacToe.placeMarker('O', 2, 2);
+
+    expect(ticTacToe.isStalemate()).toBe(true);
+});
+
+test('a winning board is not a stalemate', () => {
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('O', 0, 0);
+    ticTacToe.placeMarker('O', 1, 1);
+    ticTacToe.placeMarker('O', 2, 2);
+
+    expect(ticTacToe.isStalemate()).toBe(false);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 0, 2);
+    ticTacToe.placeMarker('X', 1, 1);
+    ticTacToe.placeMarker('X', 2, 0);
+
+    expect(ticTacToe.isStalemate()).toBe(false);
+
+    ticTacToe.gameInit();
+
+    ticTacToe.placeMarker('X', 0, 0);
+    ticTacToe.placeMarker('X', 0, 1);
+    ticTacToe.placeMarker('X', 0, 2);
+    ticTacToe.placeMarker('O', 1, 0);
+    ticTacToe.placeMarker('O', 1, 1);
+    ticTacToe.placeMarker('X', 1, 2);
+    ticTacToe.placeMarker('X', 2, 0);
+    ticTacToe.placeMarker('X', 2, 1);
+    ticTacToe.placeMarker('O', 2, 2);
+
+    expect(ticTacToe.isStalemate()).toBe(false);
 });
