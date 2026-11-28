@@ -27,81 +27,52 @@ test('rows are independent array references', () => {
     expect(independentRowReferences.size).toBe(gameGrid.length);
 });
 
-test('invalid dimensions throw an error', () => {
-    expect(() => {
-        gameboard.createGrid('3');
-    }).toThrow("Invalid Dimensions");
-
-    expect(() => {
-        gameboard.createGrid(-1);
-    }).toThrow("Invalid Dimensions");
-
-    expect(() => {
-        gameboard.createGrid("2026/12/25");
-    }).toThrow("Invalid Dimensions");
-
-    expect(() => {
-        gameboard.createGrid(5/2);
-    }).toThrow("Invalid Dimensions");
-});
+test.each([
+    '3',
+    -1,
+    '2026/12/25',
+    5 / 2
+])(
+    'invalid dimension %p throws an error',
+    dimension => {
+        expect(() => gameboard.createGrid(dimension))
+        .toThrow('Invalid Dimensions')
+    }
+);
 
 // Gameboard Marker Placement Tests
 
-test('marker at 0 0 can be placed', () => {
-    const zeroZeroGrid = gameboard.createGrid();
-    gameboard.placeMarker('X', zeroZeroGrid, 0, 0);
+test.each([
+    { x: 0, y: 0, marker: 'X'},
+    { x: 2, y: 2, marker: 'O'},
+    { x: 1, y: 1, marker: 'X'},
+    { x: 1, y: 2, marker: 'X'},
+])(
+    '$marker marker at $x, $y can be placed and remains $marker',
+    ({ x, y, marker }) => {
+        const grid = gameboard.createGrid();
+        gameboard.placeMarker(marker, grid, x, y);
 
-    expect(zeroZeroGrid[0][0]).toBe('X');
-});
+        expect(grid[x][y]).toBe(marker);
+    }
+);
 
-test('marker at 2 2 can be placed', () => {
-    const twoTwoGrid = gameboard.createGrid();
-    gameboard.placeMarker('O', twoTwoGrid, 2, 2);
+test.each([
+    { x: 3, y: 3, marker: 'X'},
+    { x: -1, y: 2, marker: 'O'},
+    { x: 0, y: 2 / 3, marker: 'O'},
+])(
+    'can not place marker $marker at $x, $y',
+    ({ x, y, marker }) => {
+        const grid = gameboard.createGrid();
+        const originalGrid = grid.map(row => [...row]);
 
-    expect(twoTwoGrid[2][2]).toBe('O');
-});
+        expect(() => gameboard.placeMarker(marker, grid, x, y))
+        .toThrow('Invalid x and y Co-Ordinates');
 
-test('can not place marker at 3 3', () => {
-    const threeThreeGrid = gameboard.createGrid();
-
-    expect(() => {
-        gameboard.placeMarker('X', threeThreeGrid, 3, 3);
-    }).toThrow("Invalid x and y Co-Ordinates");
-
-    threeThreeGrid.forEach(row => {
-        row.forEach(element => {
-            expect(element).toBe(undefined);
-        });
-    });
-});
-
-test('can not place marker at negative co-ords', () => {
-    const negativeGrid = gameboard.createGrid();
-
-    expect(() => {
-        gameboard.placeMarker('O', negativeGrid, -1, 2);
-    }).toThrow("Invalid x and y Co-Ordinates");
-
-    negativeGrid.forEach(row => {
-        row.forEach(element => {
-            expect(element).toBe(undefined);
-        });
-    });
-});
-
-test('can not place marker at fractional co-ords', () => {
-    const fractionalGrid = gameboard.createGrid();
-
-    expect(() => {
-        gameboard.placeMarker('O', fractionalGrid, 0, 2/3);
-    }).toThrow("Invalid x and y Co-Ordinates");
-
-    fractionalGrid.forEach(row => {
-        row.forEach(element => {
-            expect(element).toBe(undefined);
-        });
-    });
-});
+        expect(grid).toEqual(originalGrid);
+    }
+);
 
 test('marker can not over write another marker', () => {
     const twoTwoGrid = gameboard.createGrid();
